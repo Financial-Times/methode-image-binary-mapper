@@ -1,11 +1,11 @@
 server:
   applicationConnectors:
     - type: http
-      port: 16080
+      port: 26080
 
   adminConnectors:
     - type: http
-      port: 16081
+      port: 26081
 
   requestLog:
     appenders:

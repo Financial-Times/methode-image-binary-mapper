@@ -41,11 +41,11 @@ contentUriPrefix: http://methode-image-mapper.svc.ft.com/image/model
 server:
   applicationConnectors:
     - type: http
-      port: 16080
+      port: 26080
 
   adminConnectors:
     - type: http
-      port: 16081
+      port: 26081
 
   requestLog:
     appenders:
