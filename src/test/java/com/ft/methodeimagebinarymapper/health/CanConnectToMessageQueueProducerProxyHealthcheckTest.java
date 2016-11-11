@@ -1,6 +1,7 @@
 package com.ft.methodeimagebinarymapper.health;
 
 import com.ft.messagequeueproducer.health.QueueProxyHealthcheck;
+import com.ft.methodeimagebinarymapper.configuration.HealthcheckConfiguration;
 import com.ft.platform.dropwizard.AdvancedResult;
 import org.junit.Before;
 import org.junit.Test;

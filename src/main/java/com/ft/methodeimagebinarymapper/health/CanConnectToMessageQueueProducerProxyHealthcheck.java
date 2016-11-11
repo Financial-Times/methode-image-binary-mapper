@@ -3,6 +3,7 @@ package com.ft.methodeimagebinarymapper.health;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.ft.messagequeueproducer.health.QueueProxyHealthcheck;
+import com.ft.methodeimagebinarymapper.configuration.HealthcheckConfiguration;
 import com.ft.platform.dropwizard.AdvancedHealthCheck;
 import com.ft.platform.dropwizard.AdvancedResult;
 

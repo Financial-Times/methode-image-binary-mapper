@@ -1,4 +1,4 @@
-package com.ft.methodeimagebinarymapper.health;
+package com.ft.methodeimagebinarymapper.configuration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -2,7 +2,6 @@ package com.ft.methodeimagebinarymapper.configuration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ft.messagequeueproducer.QueueProxyConfiguration;
-import com.ft.methodeimagebinarymapper.health.HealthcheckConfiguration;
 import io.dropwizard.client.JerseyClientConfiguration;
 
 public class ProducerConfiguration {
