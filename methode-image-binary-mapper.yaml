@@ -36,7 +36,7 @@ producer:
       technicalSummary: "Tests that kafka-proxy is reachable and the CmsPublicationEvents topic exists"
       panicGuideUrl: "https://sites.google.com/a/ft.com/ft-technology-service-transition/home/run-book-library/methode-image-binary-mapper"
 
-contentUriPrefix: http://methode-image-mapper.svc.ft.com/image/model
+contentUriPrefix: http://methode-image-binary-mapper.svc.ft.com/image/binary
 
 server:
   applicationConnectors:
