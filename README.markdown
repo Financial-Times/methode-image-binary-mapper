@@ -17,10 +17,6 @@ To run locally, run:
     
     java -jar target/methode-image-binary-mapper-1.0-SNAPSHOT.jar server methode-image-binary-mapper.yaml
 
-## Build and Release
-The Jenkins build is triggered by commits to master. Docker images are build by http://ftaps116-lvpr-uk-d:8080/job/methode-image-binary-mapper/ and pushed
-to up-registry.ft.com.
-
 ## Healthchecks 
 http://localhost:26080/__health
 
