@@ -1,0 +1,17 @@
+<props>
+    <productInfo>
+        <name>Financial Times</name>
+        <issueDate>20130615</issueDate>
+    </productInfo>
+    <workFolder>/FT</workFolder>
+    <summary/>
+    <imageInfo>
+        <width>2048</width>
+        <height>1152</height>
+        <ptWidth>2048.0</ptWidth>
+        <ptHeight>1152.0</ptHeight>
+        <xDim>722.49</xDim>
+        <yDim>406.4</yDim>
+        <dim>72.249cm x
+    </imageInfo>
+</props>
