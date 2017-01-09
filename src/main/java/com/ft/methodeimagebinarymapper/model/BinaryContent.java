@@ -7,12 +7,14 @@ public class BinaryContent {
     private final byte[] value;
     private final Date lastModified;
     private final String publishReference;
+    private final String mediaType;
 
-    public BinaryContent(String uuid, byte[] value, Date lastModified, String publishReference) {
+    public BinaryContent(String uuid, byte[] value, Date lastModified, String publishReference, String mediaType) {
         this.uuid = uuid;
         this.value = value;
         this.lastModified = lastModified;
         this.publishReference = publishReference;
+        this.mediaType = mediaType;
     }
 
     public String getUuid() {
@@ -29,5 +31,9 @@ public class BinaryContent {
 
     public String getPublishReference() {
         return publishReference;
+    }
+
+    public String getMediaType() {
+        return mediaType;
     }
 }

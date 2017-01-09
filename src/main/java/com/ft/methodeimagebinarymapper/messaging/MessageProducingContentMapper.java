@@ -62,6 +62,7 @@ public class MessageProducingContentMapper {
         messageBody.put("payload", content.getValue());
         String lastModified = RFC3339_FMT.format(OffsetDateTime.ofInstant(content.getLastModified().toInstant(), UTC));
         messageBody.put("lastModified", lastModified);
+        messageBody.put("mediaType", content.getMediaType());
         try {
             Message msg = new Message.Builder().withMessageId(UUID.randomUUID())
                     .withMessageType(CMS_CONTENT_PUBLISHED)

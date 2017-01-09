@@ -19,11 +19,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.ws.rs.core.UriBuilder;
 import java.time.OffsetDateTime;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static com.ft.api.util.transactionid.TransactionIdUtils.TRANSACTION_ID_HEADER;
 import static com.ft.messaging.standards.message.v1.MediaType.JSON;
@@ -31,11 +27,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MessageProducingContentMapperTest {
@@ -46,6 +38,7 @@ public class MessageProducingContentMapperTest {
     private static final String BINARY_VALUE = "Test Content";
     private static final String PUBLISH_REF = "junit12345";
     private static final MessageType CMS_CONTENT_PUBLISHED = MessageType.messageType("cms-content-published");
+    private static final String DEFAULT_MEDIA_TYPE = "image/jpeg";
 
     private MessageProducingContentMapper mapper;
 
@@ -63,7 +56,7 @@ public class MessageProducingContentMapperTest {
 
         UUID uuid = UUID.randomUUID();
         Date lastModified = new Date();
-        BinaryContent content = new BinaryContent(uuid.toString(), BINARY_VALUE.getBytes(),lastModified,PUBLISH_REF);
+        BinaryContent content = new BinaryContent(uuid.toString(), BINARY_VALUE.getBytes(), lastModified, PUBLISH_REF, DEFAULT_MEDIA_TYPE);
 
         when(binaryContentMapper.mapImageBinary(any(EomFile.class), eq(PUBLISH_REF), eq(lastModified))).thenReturn(content);
 
@@ -79,11 +72,11 @@ public class MessageProducingContentMapperTest {
         assertThat(messages.size(), equalTo(1));
 
         Message actualMessage = messages.get(0);
-        verifyMessage(actualMessage, uuid, lastModified, content);
+        verifyMessage(actualMessage, uuid, lastModified, DEFAULT_MEDIA_TYPE, content);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private void verifyMessage(Message actualMessage, UUID expectedUuid, Date expectedLastModified, BinaryContent expectedContent)
+    private void verifyMessage(Message actualMessage, UUID expectedUuid, Date expectedLastModified, String expectedMediaType, BinaryContent expectedContent)
             throws Exception {
 
         assertThat(actualMessage.getMessageType(), equalTo(CMS_CONTENT_PUBLISHED));
@@ -94,6 +87,7 @@ public class MessageProducingContentMapperTest {
         Map messageBody = JACKSON_MAPPER.readValue(actualMessage.getMessageBody(), Map.class);
         assertThat(messageBody.get("contentUri"), equalTo("http://www.example.org/content/" + expectedUuid.toString()));
         assertThat(OffsetDateTime.parse((String) messageBody.get("lastModified")).toInstant(), equalTo(expectedLastModified.toInstant()));
+        assertThat(messageBody.get("mediaType"), equalTo(expectedMediaType));
 
         Object payload = messageBody.get("payload");
         assertThat(payload, instanceOf(String.class));
@@ -114,7 +108,7 @@ public class MessageProducingContentMapperTest {
 
         UUID uuid = UUID.randomUUID();
         Date lastModified = new Date();
-        BinaryContent content = new BinaryContent(uuid.toString(), BINARY_VALUE.getBytes(),lastModified,PUBLISH_REF);
+        BinaryContent content = new BinaryContent(uuid.toString(), BINARY_VALUE.getBytes(), lastModified, PUBLISH_REF, DEFAULT_MEDIA_TYPE);
 
         when(binaryContentMapper.mapImageBinary(any(EomFile.class), eq(PUBLISH_REF), eq(lastModified))).thenReturn(content);
 
