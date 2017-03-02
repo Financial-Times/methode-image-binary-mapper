@@ -1,10 +1,14 @@
 FROM coco/dropwizardbase:0.7.x-mvn333
 
-COPY . /
+COPY . /methode-image-binary-mapper
 
 RUN apk --update add git \
+ && cd methode-image-binary-mapper \
  && HASH=$(git log -1 --pretty=format:%H) \
- && mvn install -Dbuild.git.revision=$HASH -Dbuild.git.revision=$HASH -Djava.net.preferIPv4Stack=true \
+ && TAG=$(git tag -l --contains $HASH) \
+ && VERSION=${TAG:-untagged} \
+ && mvn versions:set -DnewVersion=$VERSION \
+ && mvn install -Dbuild.git.revision=$HASH -Djava.net.preferIPv4Stack=true \
  && rm -f target/methode-image-binary-mapper-*sources.jar \
  && mv target/methode-image-binary-mapper-*.jar /methode-image-binary-mapper.jar \
  && mv methode-image-binary-mapper.yaml /config.yaml \
