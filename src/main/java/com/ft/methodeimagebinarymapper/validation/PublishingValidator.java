@@ -25,7 +25,7 @@ public class PublishingValidator {
   private boolean missingBinaryData(EomFile eomFile) {
     byte[] value = eomFile.getValue();
     if (value == null || eomFile.getValue().length == 0) {
-      LOGGER.info(String.format("Image [%s] has no image bytes.", eomFile.getUuid()));
+      LOGGER.info(String.format("Content [%s] has no binary data.", eomFile.getUuid()));
       return true;
     }
     return false;

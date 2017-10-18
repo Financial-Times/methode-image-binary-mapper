@@ -50,7 +50,7 @@ public class MessageProducingContentMapperTest {
   private static final String BINARY_VALUE = "Test Content";
   private static final String PUBLISH_REF = "junit12345";
   private static final MessageType CMS_CONTENT_PUBLISHED = MessageType.messageType("cms-content-published");
-  private static final String DEFAULT_MEDIA_TYPE = "image/jpeg";
+  private static final String IMAGE_MEDIA_TYPE = "image/jpeg";
   private static final String PDF_MEDIA_TYPE = "application/pdf";
 
   private MessageProducingContentMapper mapper;
@@ -71,7 +71,7 @@ public class MessageProducingContentMapperTest {
 
     UUID uuid = UUID.randomUUID();
     Date lastModified = new Date();
-    BinaryContent content = new BinaryContent(uuid.toString(), BINARY_VALUE.getBytes(), lastModified, PUBLISH_REF, DEFAULT_MEDIA_TYPE);
+    BinaryContent content = new BinaryContent(uuid.toString(), BINARY_VALUE.getBytes(), lastModified, PUBLISH_REF, IMAGE_MEDIA_TYPE);
 
     when(imageBinaryMapper.mapImageBinary(any(EomFile.class), eq(PUBLISH_REF), eq(lastModified))).thenReturn(content);
 
@@ -87,7 +87,7 @@ public class MessageProducingContentMapperTest {
     assertThat(messages.size(), equalTo(1));
 
     Message actualMessage = messages.get(0);
-    verifyMessage(actualMessage, uuid, lastModified, DEFAULT_MEDIA_TYPE, content);
+    verifyMessage(actualMessage, uuid, lastModified, IMAGE_MEDIA_TYPE, content);
   }
 
   @SuppressWarnings("unchecked")
@@ -149,7 +149,7 @@ public class MessageProducingContentMapperTest {
 
     UUID uuid = UUID.randomUUID();
     Date lastModified = new Date();
-    BinaryContent content = new BinaryContent(uuid.toString(), BINARY_VALUE.getBytes(), lastModified, PUBLISH_REF, DEFAULT_MEDIA_TYPE);
+    BinaryContent content = new BinaryContent(uuid.toString(), BINARY_VALUE.getBytes(), lastModified, PUBLISH_REF, IMAGE_MEDIA_TYPE);
 
     when(imageBinaryMapper.mapImageBinary(any(EomFile.class), eq(PUBLISH_REF), eq(lastModified))).thenReturn(content);
 
