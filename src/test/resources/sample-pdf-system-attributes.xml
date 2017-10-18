@@ -1,0 +1,34 @@
+<props>
+    <productInfo>
+        <name>Financial Times</name>
+        <issueDate>20171016</issueDate>
+    </productInfo>
+    <workFolder>/FT/Weekend</workFolder><summary/>
+    <imageInfo>
+        <ptWidth>490.39</ptWidth>
+        <ptHeight>490.39</ptHeight>
+        <artBox>0.0 0.0 490.39 490.39</artBox>
+        <xDim>173.0</xDim>
+        <yDim>173.0</yDim>
+        <dim>17.3cm x 17.3cm</dim>
+        <fileType>PDF</fileType>
+        <pageBoxes>
+            <MediaBox>0.0 0.0 490.39 490.39</MediaBox>
+            <CropBox>0.0 0.0 490.39 490.39</CropBox>
+            <ArtBox>0.0 0.0 490.39 490.39</ArtBox>
+            <TrimBox>0.0 0.0 490.39 490.39</TrimBox>
+            <BleedBox>0.0 0.0 490.39 490.39</BleedBox>
+        </pageBoxes>
+        <processColors>k</processColors>
+        <documentInfo>
+            <Producer>Adobe PDF Library 9.9</Producer>
+            <Trapped>False</Trapped>
+            <ModDate>20171015064559</ModDate>
+            <CreationDate>20171015064558</CreationDate>
+            <Creator>Adobe InDesign CS5 (7.0)</Creator>
+        </documentInfo>
+        <colorType>Gray</colorType>
+        <monoAlt>/FT/Content/Weekend/Stories/Hold/Puzzles/Crossword pdfs/2017/10/xwd15680_1410_CORRECT.pdf</monoAlt>
+        <colorAlt>/FT/Content/Weekend/Stories/Hold/Puzzles/Crossword pdfs/2017/10/xwd15680_1410_CORRECT.pdf</colorAlt>
+    </imageInfo>
+</props>

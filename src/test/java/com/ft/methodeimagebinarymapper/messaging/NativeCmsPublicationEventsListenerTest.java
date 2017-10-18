@@ -1,14 +1,15 @@
 package com.ft.methodeimagebinarymapper.messaging;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import com.ft.messaging.standards.message.v1.Message;
 import com.ft.messaging.standards.message.v1.SystemId;
-
 import com.ft.methodeimagebinarymapper.exception.IngesterException;
 import com.ft.methodeimagebinarymapper.model.EomFile;
 import com.ft.methodeimagebinarymapper.validation.PublishingValidator;
 import com.ft.methodeimagebinarymapper.validation.UuidValidator;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -72,14 +73,14 @@ public class NativeCmsPublicationEventsListenerTest {
     }
 
     @Test
-    public void thatMapperIsCalledWhenMessageIsValid() throws Exception {
+    public void thatImageMapperIsCalledWhenMessageIsValid() throws Exception {
         Date lastModified = new Date();
         Message message = new Message();
         message.setOriginSystemId(SystemId.systemIdFromCode(SYSTEM_CODE));
         message.setMessageTimestamp(lastModified);
         message.setMessageBody(JACKSON_MAPPER.writeValueAsString(createSampleMethodeImage()));
 
-        when(publishingValidator.isValidForPublishing(any(EomFile.class))).thenReturn(true);
+        when(publishingValidator.isValidImageForPublishing(any(EomFile.class))).thenReturn(true);
 
         assertThat(listener.onMessage(message, TX_ID), is(true));
 
@@ -90,18 +91,38 @@ public class NativeCmsPublicationEventsListenerTest {
         EomFile actual = c.getValue();
         assertThat(actual, notNullValue());
         assertThat(actual.getUuid(), equalTo(UUID));
-
     }
 
     @Test
-    public void thatMapperIsNotCalledWhenMessageHasEmptyBody() throws Exception {
+    public void thatPDFMapperIsCalledWhenMessageIsValid() throws Exception {
+        Date lastModified = new Date();
+        Message message = new Message();
+        message.setOriginSystemId(SystemId.systemIdFromCode(SYSTEM_CODE));
+        message.setMessageTimestamp(lastModified);
+        message.setMessageBody(JACKSON_MAPPER.writeValueAsString(createSamplePDF()));
+
+        when(publishingValidator.isValidPDFForPublishing(any(EomFile.class))).thenReturn(true);
+
+        assertThat(listener.onMessage(message, TX_ID), is(true));
+
+        ArgumentCaptor<EomFile> c = ArgumentCaptor.forClass(EomFile.class);
+
+        verify(mapper, times(1)).mapPDFBinary(c.capture(), eq(TX_ID), eq(message.getMessageTimestamp()));
+
+        EomFile actual = c.getValue();
+        assertThat(actual, notNullValue());
+        assertThat(actual.getUuid(), equalTo(UUID));
+    }
+
+    @Test
+    public void thatImageMapperIsNotCalledWhenMessageHasEmptyBody() throws Exception {
         Date lastModified = new Date();
         Message message = new Message();
         message.setOriginSystemId(SystemId.systemIdFromCode(SYSTEM_CODE));
         message.setMessageTimestamp(lastModified);
         message.setMessageBody(JACKSON_MAPPER.writeValueAsString(createSampleMethodeImage()));
 
-        when(publishingValidator.isValidForPublishing(any(EomFile.class))).thenReturn(false);
+        when(publishingValidator.isValidImageForPublishing(any(EomFile.class))).thenReturn(false);
 
         assertThat(listener.onMessage(message, TX_ID), is(true));
 
@@ -109,7 +130,22 @@ public class NativeCmsPublicationEventsListenerTest {
     }
 
     @Test
-    public void thatMapperIsNotCalledWhenMessageHasNonMatchingSystemCode() {
+    public void thatPDFMapperIsNotCalledWhenMessageHasEmptyBody() throws Exception {
+        Date lastModified = new Date();
+        Message message = new Message();
+        message.setOriginSystemId(SystemId.systemIdFromCode(SYSTEM_CODE));
+        message.setMessageTimestamp(lastModified);
+        message.setMessageBody(JACKSON_MAPPER.writeValueAsString(createSamplePDF()));
+
+        when(publishingValidator.isValidPDFForPublishing(any(EomFile.class))).thenReturn(false);
+
+        assertThat(listener.onMessage(message, TX_ID), is(true));
+
+        verifyZeroInteractions(mapper);
+    }
+
+    @Test
+    public void thatImageMapperIsNotCalledWhenMessageHasNonMatchingSystemCode() {
         Message msg = new Message();
         msg.setOriginSystemId(SystemId.systemIdFromCode("foo"));
         assertThat(listener.onMessage(msg, TX_ID), is(true));
@@ -117,7 +153,7 @@ public class NativeCmsPublicationEventsListenerTest {
     }
 
     @Test(expected = IngesterException.class)
-    public void thatMapperThrowsExceptionWhenMessageCannotBeParsed() throws Exception {
+    public void thatImageMapperThrowsExceptionWhenMessageCannotBeParsed() throws Exception {
         Date lastModified = new Date();
         Message message = new Message();
         message.setOriginSystemId(SystemId.systemIdFromCode(SYSTEM_CODE));
@@ -131,6 +167,13 @@ public class NativeCmsPublicationEventsListenerTest {
         final String systemAttributes = loadFile("sample-system-attributes.xml");
         final String usageTickets = loadFile("sample-usage-tickets.xml");
         return new EomFile(UUID, "Image", null, attributes, "", systemAttributes, usageTickets, new Date());
+    }
+
+    private EomFile createSamplePDF() throws Exception {
+        final String attributes = loadFile("sample-pdf-attributes.xml");
+        final String systemAttributes = loadFile("sample-pdf-system-attributes.xml");
+        final String usageTickets = loadFile("sample-pdf-usage-tickets.xml");
+        return new EomFile(UUID, "Pdf", null, attributes, "", systemAttributes, usageTickets, new Date());
     }
 
     private String loadFile(final String filename) throws Exception {

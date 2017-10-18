@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<tl>
+    <t>
+        <id>1</id>
+        <tp>Publisher</tp>
+        <c>jojo.salcedo</c>
+        <cd>20171015073400</cd>
+        <dt>
+            <publishedDate>Sun Oct 15 07:34:44 GMT 2017</publishedDate>
+        </dt>
+    </t>
+    <t>
+        <id>4</id>
+        <tp>Publisher</tp>
+        <c>erwin.roque</c>
+        <cd>20171015224800</cd>
+        <dt>
+            <publishedDate>Sun Oct 15 22:48:20 GMT 2017</publishedDate>
+        </dt>
+    </t>
+    <t>
+        <id>5</id>
+        <tp>Publisher</tp>
+        <c>erwin.roque</c>
+        <cd>20171015233200</cd>
+        <dt>
+            <publishedDate>Sun Oct 15 23:32:00 GMT 2017</publishedDate>
+        </dt>
+    </t>
+    <t>
+        <id>6</id>
+        <tp>Publisher</tp>
+        <c>jojo.salcedo</c>
+        <cd>20171016112900</cd>
+        <dt>
+            <publishedDate>Mon Oct 16 11:29:04 GMT 2017</publishedDate>
+        </dt>
+    </t>
+    <t>
+        <id>3</id>
+        <tp>WebCopy</tp>
+        <c>jojo.salcedo</c>
+        <cd>20171016112900</cd>
+        <dt>
+            <rep>cms@ftcmr01-uvpr-uk-p</rep>
+            <first>20171015073445</first>
+            <last>20171016112905</last>
+            <count>4</count>
+            <channel>FTcom</channel>
+        </dt>
+    </t>
+    <t>
+        <id>7</id>
+        <tp>Publisher</tp>
+        <c>mustafa.sogancilar</c>
+        <cd>20171017122500</cd>
+        <dt>
+            <publishedDate>Tue Oct 17 12:25:40 GMT 2017</publishedDate>
+        </dt>
+    </t>
+    <t>
+        <id>2</id>
+        <tp>web_publication</tp>
+        <c>mustafa.sogancilar</c>
+        <cd>20171017122500</cd>
+        <dt>
+            <webpublish>
+                <site_url>http://www.ft.com/cms/s/4a90b220-b17b-11e7-aa26-bb002965bce8.html</site_url>
+                <synd_url>http://www.ft.com/cms/s/4a90b220-b17b-11e7-aa26-bb002965bce8,s01=1.html</synd_url>
+            </webpublish>
+        </dt>
+    </t>
+</tl>

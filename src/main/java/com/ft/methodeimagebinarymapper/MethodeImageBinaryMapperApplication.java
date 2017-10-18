@@ -15,6 +15,7 @@ import com.ft.methodeimagebinarymapper.health.CanConnectToMessageQueueProducerPr
 import com.ft.methodeimagebinarymapper.messaging.MessageProducingContentMapper;
 import com.ft.methodeimagebinarymapper.messaging.NativeCmsPublicationEventsListener;
 import com.ft.methodeimagebinarymapper.service.MethodeImageBinaryMapper;
+import com.ft.methodeimagebinarymapper.service.MethodePDFBinaryMapper;
 import com.ft.methodeimagebinarymapper.validation.PublishingValidator;
 import com.ft.methodeimagebinarymapper.validation.UuidValidator;
 import com.ft.platform.dropwizard.AdvancedHealthCheckBundle;
@@ -56,6 +57,7 @@ public class MethodeImageBinaryMapperApplication extends Application<MethodeImag
 
         MessageProducingContentMapper contentMapper = new MessageProducingContentMapper(
                 new MethodeImageBinaryMapper(),
+                new MethodePDFBinaryMapper(),
                 objectMapper, consumerConfig.getSystemCode(),
                 producer, contentUriBuilder);
 

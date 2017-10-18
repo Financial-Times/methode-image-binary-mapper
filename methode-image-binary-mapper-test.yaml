@@ -57,4 +57,4 @@ producer:
     technicalSummary: "Tests that kafka-proxy is reachable and the CmsPublicationEvents topic exists"
     panicGuideUrl: ""
 
-contentUriPrefix: http://methode-image-mapper.svc.ft.com/image/model
+contentUriPrefix: http://methode-image-mapper.svc.ft.com/image/binary
