@@ -51,10 +51,14 @@ public class NativeCmsPublicationEventsListener
     try {
       EomFile methodeContent = objectMapper.reader(EomFile.class).readValue(message.getMessageBody());
       uuidValidator.validate(methodeContent.getUuid());
-      if (publishingValidator.isValidForPublishing(methodeContent)) {
+      if (publishingValidator.isValidImageForPublishing(methodeContent)) {
         LOG.info("Importing content [{}] of type [{}] .", methodeContent.getUuid(), methodeContent.getType());
         LOG.info("Event for {}.", methodeContent.getUuid());
         mapper.mapImageBinary(methodeContent, transactionId, message.getMessageTimestamp());
+      } else if (publishingValidator.isValidPDFForPublishing(methodeContent)) {
+        LOG.info("Importing content [{}] of type [{}] .", methodeContent.getUuid(), methodeContent.getType());
+        LOG.info("Event for {}.", methodeContent.getUuid());
+        mapper.mapPDFBinary(methodeContent, transactionId, message.getMessageTimestamp());
       } else {
         LOG.info("Skip message [{}] of type [{}]", methodeContent.getUuid(), methodeContent.getType());
       }

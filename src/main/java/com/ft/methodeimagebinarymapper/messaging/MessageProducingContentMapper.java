@@ -8,6 +8,8 @@ import com.ft.methodeimagebinarymapper.exception.ContentMapperException;
 import com.ft.methodeimagebinarymapper.model.BinaryContent;
 import com.ft.methodeimagebinarymapper.model.EomFile;
 import com.ft.methodeimagebinarymapper.service.MethodeImageBinaryMapper;
+import com.ft.methodeimagebinarymapper.service.MethodePDFBinaryMapper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,16 +35,20 @@ public class MessageProducingContentMapper {
     private static final DateTimeFormatter RFC3339_FMT =
             DateTimeFormatter.ISO_OFFSET_DATE_TIME.withResolverStyle(ResolverStyle.STRICT);
 
-    private final MethodeImageBinaryMapper binaryContentMapper;
+    private final MethodeImageBinaryMapper imageContentMapper;
+    private final MethodePDFBinaryMapper pdfContentMapper;
     private final com.ft.messagequeueproducer.MessageProducer producer;
     private final ObjectMapper objectMapper;
     private final String systemId;
     private final UriBuilder contentUriBuilder;
 
-    public MessageProducingContentMapper(MethodeImageBinaryMapper binaryContentMapper, ObjectMapper objectMapper, String systemId,
+    public MessageProducingContentMapper(MethodeImageBinaryMapper imageContentMapper,
+                                         MethodePDFBinaryMapper pdfContentMapper,
+                                         ObjectMapper objectMapper, String systemId,
                                          com.ft.messagequeueproducer.MessageProducer producer, UriBuilder uriBuilder) {
 
-        this.binaryContentMapper = binaryContentMapper;
+        this.imageContentMapper = imageContentMapper;
+        this.pdfContentMapper = pdfContentMapper;
         this.objectMapper = objectMapper;
         this.systemId = systemId;
         this.producer = producer;
@@ -50,10 +56,17 @@ public class MessageProducingContentMapper {
     }
 
     public BinaryContent mapImageBinary(final EomFile eomFile, String transactionId, Date lastModifiedDate) {
-        List<BinaryContent> contents = Collections.singletonList(binaryContentMapper.mapImageBinary(eomFile, transactionId, lastModifiedDate));
-        producer.send(contents.stream().map(this::createMessage).collect(Collectors.toList()));
-        LOG.info("Sent {} messages", contents.size());
-        return contents.get(0);
+      BinaryContent binary = imageContentMapper.mapImageBinary(eomFile, transactionId, lastModifiedDate);
+      producer.send(Collections.singletonList(createMessage(binary)));
+      LOG.info("Sent image message with UUID {}", binary.getUuid());
+      return binary;
+    }
+
+    public BinaryContent mapPDFBinary(final EomFile eomFile, String transactionId, Date lastModifiedDate) {
+      BinaryContent binary = pdfContentMapper.mapBinary(eomFile, transactionId, lastModifiedDate);
+      producer.send(Collections.singletonList(createMessage(binary)));
+      LOG.info("Sent PDF message with UUID {}", binary.getUuid());
+      return binary;
     }
 
     private Message createMessage(BinaryContent content) {

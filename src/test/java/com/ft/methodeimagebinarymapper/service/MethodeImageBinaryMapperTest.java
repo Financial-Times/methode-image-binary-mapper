@@ -3,6 +3,7 @@ package com.ft.methodeimagebinarymapper.service;
 import com.ft.methodeimagebinarymapper.exception.TransformationException;
 import com.ft.methodeimagebinarymapper.model.BinaryContent;
 import com.ft.methodeimagebinarymapper.model.EomFile;
+
 import org.junit.Before;
 import org.junit.Test;
 

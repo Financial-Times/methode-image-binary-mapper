@@ -48,5 +48,4 @@ public class MethodeImageBinaryMapper {
         documentBuilderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
         return documentBuilderFactory.newDocumentBuilder();
     }
-
 }

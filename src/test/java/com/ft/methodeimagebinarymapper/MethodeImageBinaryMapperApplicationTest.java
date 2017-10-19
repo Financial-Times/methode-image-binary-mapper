@@ -14,9 +14,12 @@ import com.jayway.jsonpath.JsonPath;
 import com.sun.jersey.api.client.Client;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,10 +41,11 @@ public class MethodeImageBinaryMapperApplicationTest {
 
     private static final String CONFIG_FILE = "methode-image-binary-mapper-test.yaml";
     private static final String TRANSACTION_ID = "tid_ptvw9xpnhv";
+
     private static final String IMAGE_UUID = "dff0c574-4392-11e6-9b66-0712b3873ae1";
+    private static final String PDF_UUID = "4a90b220-b17b-11e7-aa26-bb002965bce8";
 
     private static MessageListener consumer;
-
     private static MessageProducer producer = mock(MessageProducer.class);
 
     public static class StubMethodeImageModelMapperApplication extends MethodeImageBinaryMapperApplication {
@@ -59,8 +63,13 @@ public class MethodeImageBinaryMapperApplicationTest {
     }
 
     @ClassRule
-    public static DropwizardAppRule<MethodeImageBinaryMapperConfiguration> appRule =
-            new DropwizardAppRule<>(StubMethodeImageModelMapperApplication.class, CONFIG_FILE);
+    public static DropwizardAppRule<MethodeImageBinaryMapperConfiguration> appRule
+            = new DropwizardAppRule<>(StubMethodeImageModelMapperApplication.class, CONFIG_FILE);
+
+    @Before
+    public void resetProducer(){
+        Mockito.reset(producer);
+    }
 
     @SuppressWarnings("unchecked")
     @Test
@@ -88,13 +97,39 @@ public class MethodeImageBinaryMapperApplicationTest {
         checkImageBinaryMessage(sentMessages.get(0), TRANSACTION_ID);
     }
 
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testMethodePDFBinaryMessageIsProcessed() throws IOException {
+        String messageBody = Files.toString(new File("src/test/resources/native-methode-pdf-model.json"), UTF_8);
+        SystemId methodeSystemId = SystemId.systemIdFromCode("methode-web-pub");
+
+        Message message = new Message.Builder()
+                .withMessageId(UUID.randomUUID())
+                .withMessageType("cms-content-published")
+                .withOriginSystemId(methodeSystemId)
+                .withMessageTimestamp(new Date())
+                .withContentType("application/json")
+                .withMessageBody(messageBody)
+                .build();
+        message.addCustomMessageHeader(TRANSACTION_ID_HEADER, TRANSACTION_ID);
+
+        assertThat(consumer.onMessage(message, TRANSACTION_ID), equalTo(true));
+
+        ArgumentCaptor<List> sent = ArgumentCaptor.forClass(List.class);
+
+        verify(producer).send(sent.capture());
+        List<Message> sentMessages = sent.getValue();
+        assertThat(sentMessages.size(), equalTo(1));
+        checkPDFBinaryMessage(sentMessages.get(0), TRANSACTION_ID);
+    }
+
     private void checkImageBinaryMessage(Message actual, String txId) {
         assertThat(actual.getCustomMessageHeader(TRANSACTION_ID_HEADER), equalTo(txId));
 
         DocumentContext json = JsonPath.parse(actual.getMessageBody());
         String jsonPayload = json.read("$.payload");
 
-        assertThat(json.read("$.contentUri"), endsWith("/image/model/" + IMAGE_UUID));
+        assertThat(json.read("$.contentUri"), endsWith("/image/binary/" + IMAGE_UUID));
         assertThat(jsonPayload, equalTo("/9j/4AAQSkZJRgABAQAAAQABAAD/7QPEUGhvdG9zaG9wIDMuMAA4QklNBAQAAAAAA4wcAQAAAg" +
                 "ACHAEFADdNRURXQVMsTUVETE9OLE1FRFRPUixBUEMsQVNJQSxBT05MLFJPTkwsVVNBLENBTixTQU0sQklaHAEUAAIACxwBFgAC" +
                 "AAEcAR4ABlJUUlBJWBwBKAAIMTM5NTE0ODYcATIAA1BJWBwBPAABNBwBRgAIMjAxNDAzMTgcAVAACzEzMjgzNCswMDAwHAFaAA" +
@@ -117,6 +152,16 @@ public class MethodeImageBinaryMapperApplicationTest {
                 "AAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYk" +
                 "NOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpa" +
                 "anqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6"));
+    }
+
+    private void checkPDFBinaryMessage(Message actual, String txId) {
+        assertThat(actual.getCustomMessageHeader(TRANSACTION_ID_HEADER), equalTo(txId));
+
+        DocumentContext json = JsonPath.parse(actual.getMessageBody());
+        String jsonPayload = json.read("$.payload");
+
+        assertThat(json.read("$.contentUri"), endsWith("/image/binary/" + PDF_UUID));
+        assertThat(jsonPayload, equalTo("aGVsbG8="));
     }
 
     @Test
@@ -156,6 +201,4 @@ public class MethodeImageBinaryMapperApplicationTest {
         assertThat(consumer.onMessage(message, TRANSACTION_ID), equalTo(true));
         verifyZeroInteractions(producer);
     }
-
-
 }

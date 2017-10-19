@@ -1,6 +1,7 @@
 package com.ft.methodeimagebinarymapper.validation;
 
 import com.ft.methodeimagebinarymapper.model.EomFile;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,21 +26,33 @@ public class PublishingValidatorTest {
     }
 
     @Test
-    public void testIsValidForPublishing() throws Exception {
+    public void testIsValidImageForPublishing() throws Exception {
         EomFile methodeContent = createSampleMethodeImage("Image", "Sample Image Body".getBytes());
-        assertTrue(publishingValidator.isValidForPublishing(methodeContent));
+        assertTrue(publishingValidator.isValidImageForPublishing(methodeContent));
     }
 
     @Test
-    public void testIsValidForPublishingEmptyBody() throws Exception {
+    public void testIsValidImageForPublishingEmptyBody() throws Exception {
         EomFile methodeContent = createSampleMethodeImage("Image", null);
-        assertFalse(publishingValidator.isValidForPublishing(methodeContent));
+        assertFalse(publishingValidator.isValidImageForPublishing(methodeContent));
     }
 
     @Test
-    public void testIsValidForPublishingNotImage() throws Exception {
+    public void testIsValidImageForPublishingNotImage() throws Exception {
         EomFile methodeContent = createSampleMethodeImage("Content", "Sample Image Body".getBytes());
-        assertFalse(publishingValidator.isValidForPublishing(methodeContent));
+        assertFalse(publishingValidator.isValidImageForPublishing(methodeContent));
+    }
+
+    @Test
+    public void testIsValidPDFForPublishing() throws Exception {
+        EomFile methodeContent = createSampleMethodeImage("Pdf", "Sample PDF Body".getBytes());
+        assertTrue(publishingValidator.isValidPDFForPublishing(methodeContent));
+    }
+
+    @Test
+    public void testIsValidPDFForPublishingNotPDF() throws Exception {
+        EomFile methodeContent = createSampleMethodeImage("Content", "Sample PDF Body".getBytes());
+        assertFalse(publishingValidator.isValidPDFForPublishing(methodeContent));
     }
 
     private EomFile createSampleMethodeImage(String type, byte[] imageBody) throws Exception {
