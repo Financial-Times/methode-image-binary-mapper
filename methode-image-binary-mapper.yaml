@@ -60,3 +60,7 @@ logging:
   appenders:
     - type: console
       logFormat: "%-5p [%d{ISO8601, GMT}] %c: %X{transaction_id} %m [%thread]%n%xEx"
+
+appInfo:
+    systemCode: "up-mibm"
+    description: "Identifies the images received from Methode, transforms the binary content into UP format."
