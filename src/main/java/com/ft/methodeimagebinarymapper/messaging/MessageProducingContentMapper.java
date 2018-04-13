@@ -7,6 +7,7 @@ import com.ft.messaging.standards.message.v1.Message;
 import com.ft.methodeimagebinarymapper.exception.ContentMapperException;
 import com.ft.methodeimagebinarymapper.model.BinaryContent;
 import com.ft.methodeimagebinarymapper.model.EomFile;
+import com.ft.methodeimagebinarymapper.service.ExternalBinaryUrlFilter;
 import com.ft.methodeimagebinarymapper.service.MethodeImageBinaryMapper;
 import com.ft.methodeimagebinarymapper.service.MethodePDFBinaryMapper;
 
@@ -37,6 +38,7 @@ public class MessageProducingContentMapper {
 
     private final MethodeImageBinaryMapper imageContentMapper;
     private final MethodePDFBinaryMapper pdfContentMapper;
+    private final ExternalBinaryUrlFilter externalBinaryUrlFilter;
     private final com.ft.messagequeueproducer.MessageProducer producer;
     private final ObjectMapper objectMapper;
     private final String systemId;
@@ -44,11 +46,13 @@ public class MessageProducingContentMapper {
 
     public MessageProducingContentMapper(MethodeImageBinaryMapper imageContentMapper,
                                          MethodePDFBinaryMapper pdfContentMapper,
+                                         ExternalBinaryUrlFilter externalBinaryUrlFilter,
                                          ObjectMapper objectMapper, String systemId,
                                          com.ft.messagequeueproducer.MessageProducer producer, UriBuilder uriBuilder) {
 
         this.imageContentMapper = imageContentMapper;
         this.pdfContentMapper = pdfContentMapper;
+        this.externalBinaryUrlFilter = externalBinaryUrlFilter;
         this.objectMapper = objectMapper;
         this.systemId = systemId;
         this.producer = producer;
@@ -56,10 +60,14 @@ public class MessageProducingContentMapper {
     }
 
     public BinaryContent mapImageBinary(final EomFile eomFile, String transactionId, Date lastModifiedDate) {
-      BinaryContent binary = imageContentMapper.mapImageBinary(eomFile, transactionId, lastModifiedDate);
-      producer.send(Collections.singletonList(createMessage(binary)));
-      LOG.info("Sent image message with UUID {}", binary.getUuid());
-      return binary;
+        if (externalBinaryUrlFilter.filter(eomFile)) {
+            LOG.info("Skipping image as it uses an external binary url.");
+            return null;
+        }
+        BinaryContent binary = imageContentMapper.mapImageBinary(eomFile, transactionId, lastModifiedDate);
+        producer.send(Collections.singletonList(createMessage(binary)));
+        LOG.info("Sent image message with UUID {}", binary.getUuid());
+        return binary;
     }
 
     public BinaryContent mapPDFBinary(final EomFile eomFile, String transactionId, Date lastModifiedDate) {
