@@ -6,6 +6,8 @@ Messages from Methode have the header: `Origin-System-Id: http://cmdb.ft.com/sys
 
 The JSON payload for images have a `type` field of `Image`. PDFs have a `type` field of `Pdf`.
 
+Binaries of those files that have the `ExternalUrl` property set, are not mapped. They are images that should be referred to on those specified links.
+
 ## PDF Support
 
 The ability to map PDF types was added in order to support the Editorial workflow for crosswords. This will be changed when PDFs are modelled in UPP as Content.
