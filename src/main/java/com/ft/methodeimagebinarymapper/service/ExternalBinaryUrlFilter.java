@@ -23,7 +23,7 @@ public class ExternalBinaryUrlFilter {
             final XPath xpath = XPathFactory.newInstance().newXPath();
             final Document attributesDocument = documentBuilder.parse(new InputSource(new StringReader(eomFile.getAttributes())));
             final String externalBinaryUrl = xpath.evaluate("/meta/picture/ExternalUrl", attributesDocument);
-            return externalBinaryUrl.isEmpty();
+            return !externalBinaryUrl.isEmpty();
         } catch (ParserConfigurationException | IOException | XPathExpressionException | SAXException e) {
             throw new TransformationException(e);
         }
