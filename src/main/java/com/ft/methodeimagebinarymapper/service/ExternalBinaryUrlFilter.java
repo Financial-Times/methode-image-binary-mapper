@@ -14,8 +14,15 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.List;
 
 public class ExternalBinaryUrlFilter {
+
+    private final List<String> externalBinaryUrlWhitelist;
+
+    public ExternalBinaryUrlFilter(final List<String> externalBinaryUrlWhitelist) {
+        this.externalBinaryUrlWhitelist = externalBinaryUrlWhitelist;
+    }
 
     public boolean filter(EomFile eomFile) {
         try {
@@ -23,7 +30,12 @@ public class ExternalBinaryUrlFilter {
             final XPath xpath = XPathFactory.newInstance().newXPath();
             final Document attributesDocument = documentBuilder.parse(new InputSource(new StringReader(eomFile.getAttributes())));
             final String externalBinaryUrl = xpath.evaluate("/meta/picture/ExternalUrl", attributesDocument);
-            return !externalBinaryUrl.isEmpty();
+            for (final String sample : externalBinaryUrlWhitelist) {
+                if (externalBinaryUrl.matches(sample)) {
+                    return true;
+                }
+            }
+            return false;
         } catch (ParserConfigurationException | IOException | XPathExpressionException | SAXException e) {
             throw new TransformationException(e);
         }

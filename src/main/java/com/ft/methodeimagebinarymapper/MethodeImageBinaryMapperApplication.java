@@ -59,7 +59,7 @@ public class MethodeImageBinaryMapperApplication extends Application<MethodeImag
         MessageProducingContentMapper contentMapper = new MessageProducingContentMapper(
                 new MethodeImageBinaryMapper(),
                 new MethodePDFBinaryMapper(),
-                new ExternalBinaryUrlFilter(),
+                new ExternalBinaryUrlFilter(configuration.getExternalBinaryUrlWhitelist()),
                 objectMapper, consumerConfig.getSystemCode(),
                 producer, contentUriBuilder);
 
