@@ -6,8 +6,10 @@ import com.ft.messaging.standards.message.v1.Message;
 import com.ft.messaging.standards.message.v1.MessageType;
 import com.ft.messaging.standards.message.v1.SystemId;
 import com.ft.methodeimagebinarymapper.exception.ContentMapperException;
+import com.ft.methodeimagebinarymapper.exception.TransformationException;
 import com.ft.methodeimagebinarymapper.model.BinaryContent;
 import com.ft.methodeimagebinarymapper.model.EomFile;
+import com.ft.methodeimagebinarymapper.service.ExternalBinaryUrlFilter;
 import com.ft.methodeimagebinarymapper.service.MethodeImageBinaryMapper;
 import com.ft.methodeimagebinarymapper.service.MethodePDFBinaryMapper;
 
@@ -33,6 +35,7 @@ import static com.ft.api.util.transactionid.TransactionIdUtils.TRANSACTION_ID_HE
 import static com.ft.messaging.standards.message.v1.MediaType.JSON;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.eq;
@@ -60,6 +63,8 @@ public class MessageProducingContentMapperTest {
   @Mock
   private MethodePDFBinaryMapper pdfBinaryMapper;
   @Mock
+  private ExternalBinaryUrlFilter externalBinaryUrlFilter;
+  @Mock
   private MessageProducer producer;
   @Mock
   private EomFile incoming;
@@ -67,7 +72,7 @@ public class MessageProducingContentMapperTest {
   @SuppressWarnings("unchecked")
   @Test
   public void thatImageMessageIsProducedAndSent() throws Exception {
-    mapper = new MessageProducingContentMapper(imageBinaryMapper, pdfBinaryMapper, JACKSON_MAPPER, SYSTEM_ID.toString(), producer, URI_BUILDER);
+    mapper = new MessageProducingContentMapper(imageBinaryMapper, pdfBinaryMapper, externalBinaryUrlFilter, JACKSON_MAPPER, SYSTEM_ID.toString(), producer, URI_BUILDER);
 
     UUID uuid = UUID.randomUUID();
     Date lastModified = new Date();
@@ -93,7 +98,7 @@ public class MessageProducingContentMapperTest {
   @SuppressWarnings("unchecked")
   @Test
   public void thatPDFMessageIsProducedAndSent() throws Exception {
-    mapper = new MessageProducingContentMapper(imageBinaryMapper, pdfBinaryMapper, JACKSON_MAPPER, SYSTEM_ID.toString(), producer, URI_BUILDER);
+    mapper = new MessageProducingContentMapper(imageBinaryMapper, pdfBinaryMapper, externalBinaryUrlFilter, JACKSON_MAPPER, SYSTEM_ID.toString(), producer, URI_BUILDER);
 
     UUID uuid = UUID.randomUUID();
     Date lastModified = new Date();
@@ -145,7 +150,7 @@ public class MessageProducingContentMapperTest {
           throws Exception {
 
     ObjectMapper failing = mock(ObjectMapper.class);
-    mapper = new MessageProducingContentMapper(imageBinaryMapper, pdfBinaryMapper, failing, SYSTEM_ID.toString(), producer, URI_BUILDER);
+    mapper = new MessageProducingContentMapper(imageBinaryMapper, pdfBinaryMapper, externalBinaryUrlFilter, failing, SYSTEM_ID.toString(), producer, URI_BUILDER);
 
     UUID uuid = UUID.randomUUID();
     Date lastModified = new Date();
@@ -160,5 +165,33 @@ public class MessageProducingContentMapperTest {
     } finally {
       verifyZeroInteractions(producer);
     }
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  public void thatNoMessageIsSentWhenExternalBinaryUrlDetected() throws Exception {
+    mapper = new MessageProducingContentMapper(imageBinaryMapper, pdfBinaryMapper, externalBinaryUrlFilter, JACKSON_MAPPER, SYSTEM_ID.toString(), producer, URI_BUILDER);
+    UUID uuid = UUID.randomUUID();
+    Date lastModified = new Date();
+    BinaryContent content = new BinaryContent(uuid.toString(), BINARY_VALUE.getBytes(), lastModified, PUBLISH_REF, IMAGE_MEDIA_TYPE);
+    when(externalBinaryUrlFilter.filter(any(EomFile.class))).thenReturn(true);
+    when(imageBinaryMapper.mapImageBinary(any(EomFile.class), eq(PUBLISH_REF), eq(lastModified))).thenReturn(content);
+
+    BinaryContent actual = mapper.mapImageBinary(incoming, PUBLISH_REF, lastModified);
+
+    assertNull(actual);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test(expected = TransformationException.class)
+  public void thatNoMessageIsSentWhenExternalBinaryUrlDetectionFails() throws Exception {
+    mapper = new MessageProducingContentMapper(imageBinaryMapper, pdfBinaryMapper, externalBinaryUrlFilter, JACKSON_MAPPER, SYSTEM_ID.toString(), producer, URI_BUILDER);
+    UUID uuid = UUID.randomUUID();
+    Date lastModified = new Date();
+    BinaryContent content = new BinaryContent(uuid.toString(), BINARY_VALUE.getBytes(), lastModified, PUBLISH_REF, IMAGE_MEDIA_TYPE);
+    when(externalBinaryUrlFilter.filter(any(EomFile.class))).thenThrow(new TransformationException(new RuntimeException("just because")));
+    when(imageBinaryMapper.mapImageBinary(any(EomFile.class), eq(PUBLISH_REF), eq(lastModified))).thenReturn(content);
+
+    mapper.mapImageBinary(incoming, PUBLISH_REF, lastModified);
   }
 }

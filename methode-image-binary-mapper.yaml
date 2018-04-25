@@ -64,3 +64,6 @@ logging:
 appInfo:
     systemCode: "up-mibm"
     description: "Identifies the images received from Methode, transforms the binary content into UP format."
+
+externalBinaryUrlWhitelist:
+  - "https://ig\\.ft\\.com/.*"

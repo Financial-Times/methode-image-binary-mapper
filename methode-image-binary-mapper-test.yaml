@@ -58,3 +58,6 @@ producer:
     panicGuideUrl: ""
 
 contentUriPrefix: http://methode-image-mapper.svc.ft.com/image/binary
+
+externalBinaryUrlWhitelist:
+  - "https://ig\\.ft\\.com/.*"
