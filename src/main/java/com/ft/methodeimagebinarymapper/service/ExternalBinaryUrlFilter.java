@@ -2,6 +2,8 @@ package com.ft.methodeimagebinarymapper.service;
 
 import com.ft.methodeimagebinarymapper.exception.TransformationException;
 import com.ft.methodeimagebinarymapper.model.EomFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -18,13 +20,15 @@ import java.util.List;
 
 public class ExternalBinaryUrlFilter {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExternalBinaryUrlFilter.class);
+
     private final List<String> externalBinaryUrlWhitelist;
 
     public ExternalBinaryUrlFilter(final List<String> externalBinaryUrlWhitelist) {
         this.externalBinaryUrlWhitelist = externalBinaryUrlWhitelist;
     }
 
-    public boolean filter(EomFile eomFile) {
+    public boolean filter(final EomFile eomFile, final String tid) {
         try {
             final DocumentBuilder documentBuilder = getDocumentBuilder();
             final XPath xpath = XPathFactory.newInstance().newXPath();
@@ -37,6 +41,7 @@ public class ExternalBinaryUrlFilter {
             }
             return false;
         } catch (ParserConfigurationException | IOException | XPathExpressionException | SAXException e) {
+            LOGGER.error(String.format("Couldn't process image's attributes for filtering for external binary URL. uuid=%s tid=%s", eomFile.getUuid(), tid), e);
             throw new TransformationException(e);
         }
     }

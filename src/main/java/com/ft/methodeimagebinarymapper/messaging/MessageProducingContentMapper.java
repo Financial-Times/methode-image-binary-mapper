@@ -60,7 +60,7 @@ public class MessageProducingContentMapper {
     }
 
     public BinaryContent mapImageBinary(final EomFile eomFile, String transactionId, Date lastModifiedDate) {
-        if (externalBinaryUrlFilter.filter(eomFile)) {
+        if (externalBinaryUrlFilter.filter(eomFile, transactionId)) {
             LOG.info("Skipping image as it uses an external binary url.");
             return null;
         }
