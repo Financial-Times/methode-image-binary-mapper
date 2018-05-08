@@ -29,6 +29,9 @@ public class ExternalBinaryUrlFilter {
     }
 
     public boolean filter(final EomFile eomFile, final String tid) {
+        if (eomFile.getAttributes().isEmpty()) {
+            return false;
+        }
         try {
             final DocumentBuilder documentBuilder = getDocumentBuilder();
             final XPath xpath = XPathFactory.newInstance().newXPath();

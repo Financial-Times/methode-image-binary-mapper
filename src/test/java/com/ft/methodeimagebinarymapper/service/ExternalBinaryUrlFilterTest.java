@@ -68,4 +68,13 @@ public class ExternalBinaryUrlFilterTest {
 
         assertFalse(externalBinaryUrlFilter.filter(eomFile, "tid_123"));
     }
+
+    @Test
+    public void testNotAttributesIsNotFiltered() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        EomFile eomFile = mapper.readValue(Files.toString(new File("src/test/resources/a2f9ed02-52c3-11e8-b24e-cad6aa67e23e-native.json"), UTF_8), EomFile.class);
+        ExternalBinaryUrlFilter externalBinaryUrlFilter = new ExternalBinaryUrlFilter(Arrays.asList("https://ig\\.ft\\.com/.*"));
+
+        assertFalse(externalBinaryUrlFilter.filter(eomFile, "tid_123"));
+    }
 }
