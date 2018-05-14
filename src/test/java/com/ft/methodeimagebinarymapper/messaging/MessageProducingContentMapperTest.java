@@ -38,6 +38,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -174,7 +175,7 @@ public class MessageProducingContentMapperTest {
     UUID uuid = UUID.randomUUID();
     Date lastModified = new Date();
     BinaryContent content = new BinaryContent(uuid.toString(), BINARY_VALUE.getBytes(), lastModified, PUBLISH_REF, IMAGE_MEDIA_TYPE);
-    when(externalBinaryUrlFilter.filter(any(EomFile.class))).thenReturn(true);
+    when(externalBinaryUrlFilter.filter(any(EomFile.class), anyString())).thenReturn(true);
     when(imageBinaryMapper.mapImageBinary(any(EomFile.class), eq(PUBLISH_REF), eq(lastModified))).thenReturn(content);
 
     BinaryContent actual = mapper.mapImageBinary(incoming, PUBLISH_REF, lastModified);
@@ -189,7 +190,7 @@ public class MessageProducingContentMapperTest {
     UUID uuid = UUID.randomUUID();
     Date lastModified = new Date();
     BinaryContent content = new BinaryContent(uuid.toString(), BINARY_VALUE.getBytes(), lastModified, PUBLISH_REF, IMAGE_MEDIA_TYPE);
-    when(externalBinaryUrlFilter.filter(any(EomFile.class))).thenThrow(new TransformationException(new RuntimeException("just because")));
+    when(externalBinaryUrlFilter.filter(any(EomFile.class), anyString())).thenThrow(new TransformationException(new RuntimeException("just because")));
     when(imageBinaryMapper.mapImageBinary(any(EomFile.class), eq(PUBLISH_REF), eq(lastModified))).thenReturn(content);
 
     mapper.mapImageBinary(incoming, PUBLISH_REF, lastModified);
