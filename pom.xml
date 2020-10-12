@@ -12,7 +12,7 @@
     <dw.version>0.7.1</dw.version>
     <advanced-dropwizard-healthcheck.version>4.14.2</advanced-dropwizard-healthcheck.version>
     <jaxrs-build-info-resource.version>1.1.1</jaxrs-build-info-resource.version>
-    <junit.version>4.11</junit.version>
+    <junit.version>4.13.1</junit.version>
     <mockito-core.version>1.9.5</mockito-core.version>
     <!-- Plugins -->
     <maven-pmd-plugin.version>3.0.1</maven-pmd-plugin.version>
